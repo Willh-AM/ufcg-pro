@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import BaixaHorario from '../components/BaixaHorario'
+const json = require('../../credentials.json')
 
 Vue.prototype.$browser = global.browser
-
+// const msg = () => {return 'abc'}
 if (!document.querySelector('#login')) {
   const divVue = document.createElement('div')
   divVue.id = 'inject-vue'
@@ -20,6 +21,9 @@ if (!document.querySelector('#login')) {
   /* eslint-disable no-new */
   const app = new Vue({
     el: '#inject-vue',
+    data: {
+      credentials: json
+    },
     render: h => h(BaixaHorario)
   })
 

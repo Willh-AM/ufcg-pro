@@ -1,11 +1,12 @@
 <template>
   <button class="btn btn-primary" v-on:click="exportarHorario()" v-bind:disabled="!this.tableTurmas">
-    Exportar Horário
+    Export
     <span class="glyphicon glyphicon-circle-arrow-down"></span>
   </button>
 </template>
 
 <script>
+const calendar = require('ics')
 // Extraído de https://stackoverflow.com/a/54437356/6732300
 const getProximoDiaDaSemana = (dayNumber, excludeToday = true, refDate = new Date()) => {
   const dayMap = {
@@ -71,9 +72,18 @@ const getTurmas = ref => {
     }
   })
 }
-const montaICS = table => {
+// For Google Calendar API
+const signIn = auth => {
+  console.log(auth)
+
+  // const API_ID =
+  // const API_KEY =
+}
+
+const montaICS = (table, icalendar) => {
   const cadeiras = getTurmas(table)
-  const cal = ics()
+
+  const calendar_events = []
   const fimPeriodo = getFimPeriodo()
   cadeiras.forEach(({ horario, cadeira }) => {
     Object.keys(horario).forEach(dia => {
@@ -81,31 +91,74 @@ const montaICS = table => {
       slots.forEach(({ slot, sala }) => {
         const [inicio, fim] = slot.split('-')
         const proximaData = getProximoDiaDaSemana(dia).toLocaleDateString('en-US')
+
         const begin = `${proximaData} ${inicio}`
         const end = `${proximaData} ${fim}`
-        cal.addEvent(cadeira, 'Aula', sala, begin, end, { freq: 'WEEKLY', until: fimPeriodo })
+
+        const [mm, dd, aa] = proximaData.split('/')
+        const [start_h, start_m] = inicio.split(':')
+        const [end_h, end_m] = fim.split(':')
+
+        const calendar_event = {
+          title: cadeira,
+          location: sala,
+          // ano, mês, dia, hora, minuto
+          start: [aa, mm, dd, start_h, start_m],
+          end: [aa, mm, dd, end_h, end_m],
+          recurrenceRule: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;INTERVAL=1;UNTIL=' + aa + mm + dd + 'T030000Z'
+        }
+        calendar_events.push(calendar_event)
       })
     })
   })
-  cal.download('horario.csv')
+
+  const { error, value } = calendar.createEvents(calendar_events)
+
+  if (error) {
+    console.log(error)
+    return
+  }
+  // Importante, não formatar em utf-8
+  // download(value, 'horario.ics', 'text/calendar;')
 }
 
 const irParaAjuda = () => {
   const win = window.open('https://gist.github.com/lucis/1243ac0bd195647141c7d7f5d3f2691a', '_blank')
   win.focus()
 }
+
+function download(data, filename, type) {
+  var file = new Blob([data], { type: type })
+  if (window.navigator.msSaveOrOpenBlob) window.navigator.msSaveOrOpenBlob(file, filename)
+  else {
+    var a = document.createElement('a'),
+      url = URL.createObjectURL(file)
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    setTimeout(function() {
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+    }, 0)
+  }
+}
+
 export default {
   name: 'BaixaHorario',
   props: ['table'],
   data() {
     return {
       turmas: [],
-      tableTurmas: null
+      tableTurmas: null,
+      calendar: null
     }
   },
   methods: {
     exportarHorario() {
-      montaICS(this.tableTurmas)
+      montaICS(this.tableTurmas, this.calendar)
+      signIn(this.$root.credentials)
+
       irParaAjuda()
     }
   },

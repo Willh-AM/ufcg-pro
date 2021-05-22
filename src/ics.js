@@ -1,4 +1,5 @@
 /*! ics.js Wed Aug 20 2014 17:23:02 */
+
 var saveAs =
   saveAs ||
   (function(e) {
