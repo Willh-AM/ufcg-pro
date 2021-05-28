@@ -1,8 +1,13 @@
 <template>
-  <button class="btn btn-primary" v-on:click="exportarHorario()" v-bind:disabled="!this.tableTurmas">
-    Exportar Horário
-    <span class="glyphicon glyphicon-circle-arrow-down"></span>
-  </button>
+  <div>
+    <button class="btn btn-primary" v-on:click="exportarHorario()" v-bind:disabled="!this.tableTurmas">
+      Exportar Horário
+      <span class="glyphicon glyphicon-circle-arrow-down"></span>
+    </button>
+    <button class="btn btn-primary">
+      Login Google
+    </button>
+  </div>
 </template>
 
 <script>

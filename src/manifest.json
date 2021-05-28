@@ -7,7 +7,7 @@
     "48": "icons/icon_48.png",
     "128": "icons/icon_128.png"
   },
-  "page_action": {
+  "browser_action": {
     "default_title": "ufcg-pro",
     "default_popup": "popup/popup.html"
   },
@@ -16,6 +16,10 @@
     "persistent": false
   },
   "web_accessible_resources": ["*.js", "*.css"],
-  "permissions": ["tabs", "https://ufcgexamples.lcnjnr.now.sh/*", "*://pre.ufcg.edu.br/ControleAcademicoOnline/*", "*://localhost/*"],
-  "update_url": "https://ufcgprodist.now.sh/updates.json"
+  "permissions": ["tabs", "identity", "https://ufcgexamples.lcnjnr.now.sh/*", "*://pre.ufcg.edu.br/ControleAcademicoOnline/*", "*://localhost/*"],
+  "update_url": "https://ufcgprodist.now.sh/updates.json",
+  "oauth2": {
+    "client_id": "298482042929-3tm74rbtlb0bg3hgtt43n61jd4q083lv.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/calendar"]
+  }
 }

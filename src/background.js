@@ -74,3 +74,13 @@ browser.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   shouldInject && injectScript(shouldInject)
   shouldInjectCss && injectCSS(shouldInjectCss)
 })
+
+let userSigned = false
+// Listen
+chrome.runtime.onMessage.addListener((req, sen, res) => {
+  console.log('sjs')
+  if (req.message === 'login') {
+  } else if (req.message === 'logout') {
+  } else if (req.message === 'logout') {
+  }
+})
